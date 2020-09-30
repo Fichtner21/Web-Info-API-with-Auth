@@ -102,26 +102,51 @@ class Website_Info extends WP_REST_Controller {
 				    } 
 				}
 
-				foreach($activated_plugins as $plug){
-					//var_dump($plug);
+				foreach($activated_plugins as $plug){					
 					echo '<li>'. $plug['Name'] . ', ' . $plug['Version'] . '</li>';
-				}
-
-			    echo '</ol>';
+				}			    
 			}
 
-			function get_theme_info(){
+			function get_theme_info(){				
 				$my_theme = wp_get_theme();
-				echo '<h3>Motyw:</h3> '. '<br>';				
+				echo '<h3>Motyw:</h3> '. '<br>';						
 				echo 'Nazwa motywu: ' . $my_theme['Name'] . '<br>';
 				echo 'Wersja: ' . $my_theme['Version'] . '<br>';
 				echo 'Autor: ' . $my_theme['Author'] . '<br>';				
 			}
+
+			function get_option_info(){ ?>
+				<h3>Opcje:</h3>
+				<ol>
+					<li><?= 'admin_email: ' . get_option('admin_email'); ?></li>
+					<li><?= 'blogname: ' . get_option('blogname'); ?></li>
+					<li><?= 'blogdescription: ' . get_option('blogdescription'); ?></li>
+					<li><?= 'blog_charset: ' . get_option('blog_charset'); ?></li>
+					<li><?= 'date_format: ' . get_option('date_format'); ?></li>
+					<li><?= 'default_category: ' . get_option('default_category'); ?></li>
+					<li><?= 'home: ' . get_option('home'); ?></li>
+					<li><?= 'siteurl: ' . get_option('siteurl'); ?></li>
+					<li><?= 'template: ' . get_option('template'); ?></li>
+					<li><?= 'users_can_register: ' . get_option('users_can_register'); ?></li>
+					<li><?= 'posts_per_page: ' . get_option('posts_per_page'); ?></li>
+					<li><?= 'posts_per_rss: ' . get_option('posts_per_rss'); ?></li>					
+				</ol><?php
+			}
+
+			function get_total_all(){
+				$all_options = wp_load_alloptions();
+				$my_options  = array();
+				 
+				foreach ( $all_options as $name => $value ) {
+				    if ( stristr( $name, '_transient' ) ) {
+				        $my_options[ $name ] = $value;
+				    }
+				}
+				 
+				print_r( $my_options );
+			}				
 			
-			// TODO: Run real code here.
-			
-			// return 'ok';
-			return wp_version() . get_plugins_all() . list_the_plugins() . get_theme_info();
+			return wp_version() . get_plugins_all() . list_the_plugins() . get_theme_info() . get_option_info() . get_total_all();			
 		}
 		else {
 			return new WP_Error( 'invalid-method', 'You must specify a valid username and password.', array( 'status' => 400 /* Bad Request */ ) );
